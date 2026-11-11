@@ -2,6 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('submit/', views.submit, name='submit'),
-    path('result/', views.show_exam_result, name='show_exam_result'),
+    path('submit/<int:course_id>/', views.submit, name='submit'),
+    path('result/<int:course_id>/<int:submission_id>/', views.show_exam_result, name='show_exam_result'),
 ]
