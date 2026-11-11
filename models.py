@@ -1,24 +1,32 @@
 from django.db import models
 
 class Question(models.Model):
-    text = models.TextField(verbose_name="نص السؤال")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإنشاء")
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    content = models.CharField(max_length=200)
+    grade = models.IntegerField(default=50)
 
     def __str__(self):
-        return self.text
+        return "Question: " + self.content
+
+    def is_get_score(self, selected_ids):
+        all_answers = self.choice_set.filter(is_correct=True).count()
+        selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+        if all_answers == selected_correct:
+            return True
+        else:
+            return False
 
 class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='choices', verbose_name="السؤال")
-    text = models.CharField(max_length=255, verbose_name="نص الخيار")
-    is_correct = models.BooleanField(default=False, verbose_name="هل الخيار صحيح؟")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    content = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.text} ({'صحيح' if self.is_correct else 'خطأ'})"
+        return self.content
 
 class Submission(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="السؤال")
-    selected_choice = models.ForeignKey(Choice, on_delete=models.CASCADE, verbose_name="الخيار المُختار")
-    submitted_at = models.DateTimeField(auto_now_add=True, verbose_name="وقت الإرسال")
+    enrollment = models.ForeignKey('Enrollment', on_delete=models.CASCADE)
+    choices = models.ManyToManyField(Choice)
 
     def __str__(self):
-        return f"إجابة على السؤال: {self.question.text[:30]}"
+        return f"Submission for enrollment: {self.enrollment.id}"
