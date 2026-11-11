@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, TabularInline
-from .models import Question, Choice, Submission, Lesson
+from django.contrib.auth.models import User
+from .models import Question, Choice, Submission, Lesson, Course, Enrollment, UserProfile
 
 class ChoiceInline(TabularInline):
     model = Choice
@@ -13,8 +14,8 @@ class QuestionInline(TabularInline):
 @admin.register(Question)
 class QuestionAdmin(ModelAdmin):
     inlines = [ChoiceInline]
-    search_fields = ['text']
-    list_display = ['text', 'created_at']
+    search_fields = ['question_text']  
+    list_display = ['question_text', 'created_at'] 
 
 @admin.register(Lesson)
 class LessonAdmin(ModelAdmin):
@@ -23,4 +24,16 @@ class LessonAdmin(ModelAdmin):
 
 @admin.register(Submission)
 class SubmissionAdmin(ModelAdmin):
-    list_display = ['question', 'selected_choice', 'submitted_at']
+    list_display = ['enrollment', 'submitted_at']  
+
+@admin.register(Course)
+class CourseAdmin(ModelAdmin):
+    list_display = ['title']
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(ModelAdmin):
+    list_display = ['user', 'course']
+
+@admin.register(UserProfile)
+class UserProfileAdmin(ModelAdmin):
+    list_display = ['user']
